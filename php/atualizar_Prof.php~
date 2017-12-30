@@ -1,0 +1,53 @@
+<?PHP 
+require_once 'init.php';
+	//session_start();
+	if($_POST) {
+		$nome = $_POST['nome'];
+		$email = $_POST['email'];
+		$formacao = $_POST['formacao'];
+		$telefone = $_POST['telefone'];
+		$instituicao = $_POST['instituicao'];
+		$id = $_POST['id'];
+	}else {
+		echo'<SCRIPT Language="javascript">
+		alert("Erro nos dados. Tente novamente");
+		location.href="../Painel_Aluno";
+		</SCRIPT>';	
+	}
+	
+		
+	
+	$PDO = db_connect();	//função definida em functions.php
+	
+		$sql = "UPDATE Aluno SET Nome = :Nome, Email = :Email, Formacao = :Formacao, Instituicao = :Instituicao, Telefone = :Telefone WHERE ID = :ID";
+		
+		
+		
+		$stmt = $PDO->prepare($sql);//prepara script
+		$stmt->bindParam(':Nome', $nome);//liga os parametros as nossas variaveis
+		$stmt->bindParam(':Email', $email);
+		$stmt->bindParam(':Formacao', $formacao);
+		$stmt->bindParam(':Instituicao', $instituicao);
+		$stmt->bindParam(':Telefone',$telefone);
+		$stmt->bindParam(':ID',$id);
+	
+
+		if ($stmt->execute()){
+			echo'<SCRIPT Language="javascript">
+			alert("Cadastro Atualizado.");
+			location.href="../Painel_Aluno";
+			</SCRIPT>';
+		}
+		else{
+    		//echo "Erro ao cadastrar";//echo escreve a msg na tela,uso aqui pra ver se funcionou na versao final ele deve ser retirado
+    		//print_r($stmt->errorInfo());
+	
+			echo'<SCRIPT Language="javascript">
+			alert("Falha na atualização. contate o admin");
+			location.href="../Painel_Aluno";
+			</SCRIPT>';	
+	
+		}  
+				
+
+?>

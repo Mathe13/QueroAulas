@@ -1,0 +1,198 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	<?PHP
+		require_once '../php/init.php';
+		session_start();	
+		$user = info($_SESSION['user_id'],"admin");
+		$new_materia = $_POST['new_materia'];
+	?>
+		<title>Painel do Aluno</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	    <script type="text/javascript">
+	    	function redirecionando(){
+	    		setTimeout("window.location.href='index.php'", 0);
+	    	}
+	    </script>
+	</head>
+	<body>
+
+		<!-- Header -->
+			<div id="header">
+
+				<div class="top">
+
+					<!-- Logo -->
+					<!-- COLOCAR FOTO DO PERFIL -->
+						<div id="logo">
+							<span class="image avatar48"><img src="images/avatar.jpg" alt="" /></span>
+							<h1 id="title"><?PHP echo$user['Nome']; ?></h1>
+						</div>
+
+					<!-- Nav -->
+						<nav id="nav">
+							<ul>
+								<li><a href="#top" id="top-link" class="skel-layers-ignoreHref"><span class="icon fa-home">Home</span></a></li>
+								<li><a href="#portfolio" id="portfolio-link" class="skel-layers-ignoreHref"><span class="icon fa-th">Adicionar matérias</span></a></li>
+								<li><a href="#about" id="about-link" class="skel-layers-ignoreHref"><span class="icon fa-user">Reportagens</span></a></li>
+								<li><a href="#contact" id="contact-link" class="skel-layers-ignoreHref"><span class="icon fa-envelope">Sair</span></a></li>
+							</ul>
+						</nav>
+
+				</div>
+
+			</div>
+
+		<!-- Main -->
+			<div id="main">
+
+				<!-- Intro -->
+					<section id="top" class="one dark cover">
+						<div class="container">
+						<h2 style="size: 25px; margin-top: -50px; margin-bottom: -40px; font-weight: bold;">Seja bem-vindo!<br>Admin: 
+						<?PHP echo $user['Nome']; ?></h2>
+						</div>
+					</section>
+
+				<!-- Portfolio -->
+					<section id="portfolio" class="two">
+						<div class="container">
+
+						<header>
+							<h2>Adicionar novas matérias</h2>
+						</header>
+
+						<?php
+						// Cadastro de matérias, caso já cadastrado, informar.
+						$PDO = db_connect();
+						$sql="SELECT * FROM materias WHERE materia = :materiaa";
+						$stmt = $PDO->prepare($sql);
+						$stmt->bindParam(':materiaa', $new_materia);
+						$stmt->execute();
+						$resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+						if (count($resultado) > 0){
+							echo'<SCRIPT Language="javascript">
+							alert("Materia ja cadastrada!");
+							location.href="index.php";
+							</SCRIPT>';
+						} else{
+							$sql = "INSERT INTO Materias(materia) VALUES(:materiaa)";
+							$stmt = $PDO->prepare($sql);
+							$stmt->bindParam(':materiaa', $new_materia);
+							if ($stmt->execute()){
+								echo'<SCRIPT Language="javascript">
+								alert("Cadastro Realizado.");
+								location.href="index.php";
+								</SCRIPT>';
+							}
+							else{				
+								echo'<SCRIPT Language="javascript">
+								alert("Falha no cadastro.");
+								location.href="index.php";
+								</SCRIPT>';	
+							}}
+						?>
+						</div>
+					</section>
+
+				<!-- About Me -->
+					<section id="about" class="three">
+						<div class="container">
+						
+						<h2>Minhas Informações</h2>
+						
+						
+						
+						
+							<form action="../php/atualizar_Aluno.php" method="POST">
+														
+								<?PHP			
+									echo '	
+																	
+									<th>Usuário: <input type="text" class="perfil" name="nome" id="nome" size="20"  placeholder="'.$user['Nome'].'" required disabled="true"  /></th>
+									E-mail: <input type="email" class="perfil" name="email" id="email" size="20"  placeholder="'.$user['Email'].'" required disabled="true" />
+									curso: <input type="text"   class="perfil" name="curso" id="curso"size="20"  placeholder="'.$user['Curso'].'" required disabled="true" />
+		 							Instituiçao: <input type="text" class="perfil"  name="instituicao" id="instituicao" size="20"  placeholder="'.$user['Instituicao'].'" required disabled="true" />
+									Telefone: <input type="text"   class="perfil" name="telefone" id="telefone" size="20"  placeholder="'.$user['Telefone'].'" maxlenght="15" required disabled="true" />	<br>						      
+									<input type="hidden" name="id" value="'.$user['ID'].'"/>			      				
+			      				';?>
+									<input type="submit" value="Salvar" style="padding-bottom: 20px;padding-left: 80px;padding-right: 80px;padding-top: 20px; font-size: 82%;font:inherit;">
+									<button type="button" onclick="myFunction()" style="padding-bottom: 20px;padding-left: 80px;padding-right: 80px;padding-top: 20px; font-size: 82%;font:inherit;">Editar</button>
+															
+							</form>
+												
+						</div> 
+						
+					</section>
+
+				<!-- Contact -->
+					<section id="contact" class="four">
+						<div class="container">
+
+							<header>
+								<h2>Contate-nos</h2>
+							</header>
+
+							<p>Envie perguntas ou sugestões. Iremos responder assim que possível.</p>
+
+							<form method="post" action="#">
+								<div class="row">
+									<div class="6u 12u$(mobile)"><input type="text" name="name" placeholder="Nome" /></div>
+									<div class="6u$ 12u$(mobile)"><input type="text" name="email" placeholder="Email" /></div>
+									<div class="12u$">
+										<textarea name="message" placeholder="Mensagem"></textarea>
+									</div>
+									<div class="12u$">
+										<input type="submit" value="Enviar Mensagem" />
+									</div>
+								</div>
+							</form>
+
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<div id="footer">
+
+				<!-- Copyright -->
+					<ul class="copyright">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/jquery.scrollzer.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+			<script>
+			function myFunction() {
+				document.getElementById("nome").disabled = false;	
+				document.getElementById("email").disabled = false;
+				document.getElementById("telefone").disabled = false;
+				document.getElementById("curso").disabled = false;
+				document.getElementById("instituicao").disabled = false;
+				<?php
+				echo '
+				document.getElementById("nome").value = "'.$user['Nome'].'";
+				document.getElementById("telefone").value = "'.$user['Telefone'].'";
+				document.getElementById("email").value = "'.$user['Email'].'"	;
+				document.getElementById("curso").value = "'.$user['Curso'].'";
+				document.getElementById("instituicao").value = "'.$user['Instituicao'].'";				
+				';
+				?>
+			}
+</script>
+
+	</body>
+</html>

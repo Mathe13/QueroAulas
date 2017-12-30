@@ -1,0 +1,61 @@
+<?php
+	require_once 'init.php';
+	//session_start();
+	if($_POST) {
+		$materia = $_POST['materia'];
+		$id_Prof = $_POST['id_prof'];
+		
+
+	}else {
+		echo'<SCRIPT Language="javascript">
+		alert("Erro nos dados de cadastro. Tente novamente");
+		location.href="../index.html";
+		</SCRIPT>';	
+	}
+	//echo $senha;
+		
+	//primeiro pegar o nome da materia
+	$PDO = db_connect();	//função definida em functions.php
+	$sql="SELECT Id FROM Materias WHERE materia = :materia";
+	$stmt = $PDO->prepare($sql);//prepara script
+	$stmt->bindParam(':materia', $materia);
+	$stmt->execute();
+	$res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	if (count($res) > 0){//significa q tem pegou o nome
+		$res = $res[0];
+		$Id_Mat=$res['Id'];//id_mat agr tem a id da materia
+		
+	
+	//cadastra relação prof_X_MAT
+		$sql = "INSERT INTO Prof_X_Mat(Id_Prof, Id_Mat) 
+		VALUES(:Id_Prof, :Id_Mat)";//SCRIPT SQL
+		$stmt = $PDO->prepare($sql);//prepara script
+		$stmt->bindParam(':Id_Prof', $Id_Prof);//liga os parametros nas nossas variaveis
+		$stmt->bindParam(':Id_Mat', $Id_Mat);
+		//echo $tipo;
+	
+
+		if ($stmt->execute()){
+			echo'<SCRIPT Language="javascript">
+			alert("Adicionada");
+			location.href="../Painel_Professor/index.php";
+			</SCRIPT>';
+		}
+		else{
+    			
+			echo'<SCRIPT Language="javascript">
+			alert("Falha no cadastro. contate o admin");
+			location.href="../Painel_Professor/index.php";
+			</SCRIPT>';	
+	
+		}
+		
+	//echo $id_Mat;
+	}else{
+		echo'<SCRIPT Language="javascript">
+		alert("Erro,contate o admin");
+		location.href="../index.html#services";
+		</SCRIPT>';	
+	}
+
+?>
